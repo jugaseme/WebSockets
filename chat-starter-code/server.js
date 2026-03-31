@@ -7,6 +7,8 @@ const CONSTANTS = require('./utils/constants.js');
 const fs = require('fs');
 const path = require('path');
 const WebSocket = require('ws');
+const { connect } = require('http2');
+const { connected } = require('process');
 
 // You may choose to use the constants defined in the file below
 const { PORT, CLIENT } = CONSTANTS;
@@ -49,10 +51,11 @@ wsServer.on('connection', (socket) => {
     console.log("mensaje recibido: ", data);
   })
 
-  socket.send("hola");
+  //socket.send("hola");
 
   socket.on("message", (data) => {
-    socket.send("mesaage recibido" + data);
+    //socket.send("mesaage recibido  " + data);
+    broadcast(data, socket);
   })
 
 });
@@ -60,6 +63,7 @@ wsServer.on('connection', (socket) => {
 
 // Exercise 7: Send a message back to the client, echoing the message received
 // Exercise 8: Broadcast messages received to all other clients
+// Server
 
 
 ///////////////////////////////////////////////
@@ -69,6 +73,11 @@ wsServer.on('connection', (socket) => {
 function broadcast(data, socketToOmit) {
   // TODO
   // Exercise 8: Implement the broadcast pattern. Exclude the emitting socket!
+  wsServer.clients.forEach(connectedSocket => {
+    if (connectedSocket.readyState === WebSocket.OPEN && connectedSocket !== socketToOmit) {
+      connectedSocket.send(data);
+    }
+  })
 }
 
 // Start the server listening on localhost:8080
