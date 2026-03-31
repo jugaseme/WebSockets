@@ -43,9 +43,21 @@ const wsServer = new WebSocket.Server({ server: server });
 // TODO
 // Exercise 5: Respond to connection events 
 wsServer.on('connection', (socket) => {
-  console.log('Client connected');
+  console.log("cliente conectado");
+
+  socket.on("message", (data) => {
+    console.log("mensaje recibido: ", data);
+  })
+
+  socket.send("hola");
+
+  socket.on("message", (data) => {
+    socket.send("mesaage recibido" + data);
+  })
+
 });
 // Exercise 6: Respond to client messages
+
 // Exercise 7: Send a message back to the client, echoing the message received
 // Exercise 8: Broadcast messages received to all other clients
 
